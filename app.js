@@ -44,11 +44,14 @@ splashFrame.src = 'assets/splash/onusano-html.html';
 (function waitForHype() {
   if (splashDone) return;
   try {
-    const doc = splashFrame.contentWindow.HYPE.documents['onusano-html'];
-    if (doc) {
-      doc.startTimelineNamed('Main Timeline', doc.kDirectionForward);
-      splashFrame.style.visibility = 'visible';
-      setTimeout(showApp, 2200);
+    const hype = splashFrame.contentWindow.HYPE;
+    const doc  = hype && hype.documents && hype.documents['onusano-html'];
+    if (doc && typeof doc.startTimelineNamed === 'function') {
+      doc.startTimelineNamed('Main Timeline', 1);
+      requestAnimationFrame(() => {
+        splashFrame.style.visibility = 'visible';
+        setTimeout(showApp, 2200);
+      });
       return;
     }
   } catch(e) {}
