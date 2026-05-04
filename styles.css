@@ -157,7 +157,7 @@ body {
 .btn-shadow {
   display: block;
   position: absolute;
-  top: 4px; left: 0; right: 0; bottom: 0;
+  top: 4px; left: 0; right: 0; bottom: -4px;
   background: var(--blue);
   border-radius: 9999px;
 }
