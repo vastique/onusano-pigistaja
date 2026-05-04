@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="et">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bänneripigistaja</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+  <div id="splash">
+    <iframe id="splash-frame" src="assets/splash/onusano-html.html" scrolling="no" frameborder="0"></iframe>
+  </div>
+
+  <div id="app">
+    <img src="assets/onu-sano-logo.svg" id="logo" alt="Onu Sano logo" draggable="false">
+
+    <div id="drop-zone" role="button" tabindex="0" aria-label="Kliki või lohista bänneripildid siia">
+      <svg id="drop-border" aria-hidden="true">
+        <rect id="dash-rect" x="2" y="2" rx="16" ry="16"/>
+      </svg>
+
+      <div id="empty-state" class="zone-layer">
+        <svg class="upload-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+             stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M4 17v2a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-2"/>
+          <polyline points="16 11 12 7 8 11"/>
+          <line x1="12" y1="7" x2="12" y2="17"/>
+        </svg>
+        <span>Lohista siia need neetud bännerid!</span>
+      </div>
+
+      <div id="files-ready" class="zone-layer hidden">
+        <span id="files-label"></span>
+      </div>
+
+
+    </div>
+
+    <button id="compress-btn" type="button">
+      <span class="btn-shadow"></span>
+      <span class="btn-face">Pigista bännerid</span>
+    </button>
+
+    <div id="error-bubble" aria-hidden="true">
+      <img src="assets/error-bubble.svg" alt="" width="172" height="82">
+    </div>
+  </div>
+
+  <canvas id="confetti-canvas" aria-hidden="true"></canvas>
+
+  <input id="file-input" type="file" multiple
+         accept=".jpg,.jpeg,.png,.gif,.bmp,.tiff,.tif,.webp,.heic"
+         style="display:none">
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
