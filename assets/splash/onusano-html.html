@@ -20,9 +20,16 @@
   <body>
 	<!-- copy these lines to your document: -->
 
-	<div id="onusanohtml_hype_container" class="HYPE_document" style="margin:auto;position:relative;width:100%;height:100%;overflow:hidden;">
-		<script type="text/javascript" charset="utf-8" src="onusano-html.hyperesources/onusanohtml_hype_generated_script.js?78417"></script>
-	</div>
+	<div id="onusanohtml_hype_container" class="HYPE_document" style="margin:auto;position:relative;width:100%;height:100%;overflow:hidden;"></div>
+	<script>
+	  var isChrome = /Chrome\//.test(navigator.userAgent) && !/Edg\//.test(navigator.userAgent);
+	  setTimeout(function() {
+	    var s = document.createElement('script');
+	    s.charset = 'utf-8';
+	    s.src = 'onusano-html.hyperesources/onusanohtml_hype_generated_script.js?78417';
+	    document.body.appendChild(s);
+	  }, isChrome ? 200 : 0);
+	</script>
 
 	<!-- end copy -->
 	
