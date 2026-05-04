@@ -41,7 +41,8 @@ function showApp() {
 }
 
 window.addEventListener('message', e => {
-  if (e.data === 'splash-done') showApp();
+  if (e.data === 'splash-ready') splashFrame.style.visibility = 'visible';
+  if (e.data === 'splash-done')  showApp();
 });
 setTimeout(showApp, 10000); // hard fallback
 
