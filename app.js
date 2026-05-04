@@ -40,15 +40,20 @@ function showApp() {
   requestAnimationFrame(() => appEl.classList.add('visible'));
 }
 
-splashFrame.addEventListener('load', () => {
+splashFrame.src = 'assets/splash/onusano-html.html';
+(function waitForHype() {
+  if (splashDone) return;
   try {
     const doc = splashFrame.contentWindow.HYPE.documents['onusano-html'];
-    doc.startTimelineNamed('Main Timeline', doc.kDirectionForward);
+    if (doc) {
+      doc.startTimelineNamed('Main Timeline', doc.kDirectionForward);
+      splashFrame.style.visibility = 'visible';
+      setTimeout(showApp, 2200);
+      return;
+    }
   } catch(e) {}
-  splashFrame.style.visibility = 'visible';
-  setTimeout(showApp, 2200);
-});
-splashFrame.src = 'assets/splash/onusano-html.html';
+  requestAnimationFrame(waitForHype);
+}());
 setTimeout(showApp, 10000); // hard fallback
 
 function scaleSplashFrame() {
