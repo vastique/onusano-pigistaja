@@ -39,9 +39,6 @@
 
   <script>
     window.onload = function() {
-      var d = window.HYPE && window.HYPE.documents && window.HYPE.documents['onusano-html'];
-      if (d) d.startTimelineNamed('Main Timeline', d.kDirectionForward);
-      parent.postMessage('splash-ready', '*');
       setTimeout(function(){ parent.postMessage('splash-done', '*'); }, 2200);
     };
   </script>

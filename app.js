@@ -31,6 +31,8 @@ const fileInput    = $('file-input');
 const confettiCvs  = $('confetti-canvas');
 const confettiCtx  = confettiCvs.getContext('2d');
 
+splashFrame.src = 'assets/splash/onusano-html.html';
+
 // ── Splash ─────────────────────────────────────────────────────────────────────
 
 function showApp() {
@@ -41,8 +43,7 @@ function showApp() {
 }
 
 window.addEventListener('message', e => {
-  if (e.data === 'splash-ready') splashFrame.style.visibility = 'visible';
-  if (e.data === 'splash-done')  showApp();
+  if (e.data === 'splash-done') showApp();
 });
 setTimeout(showApp, 10000); // hard fallback
 
