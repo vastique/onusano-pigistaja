@@ -396,6 +396,19 @@ body {
 }
 #auth-message.error { color: #c0392b; }
 
+/* ── Mobile ─────────────────────────────────────────── */
+
+@media (max-width: 600px) {
+  #auth-btn {
+    width: 34px;
+    height: 34px;
+    top: 12px;
+    right: 12px;
+  }
+  #auth-btn svg { width: 16px; height: 16px; }
+  #auth-dropdown { top: 54px; right: 12px; }
+}
+
 #auth-user-email {
   font-size: 14px;
   color: var(--blue);

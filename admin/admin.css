@@ -432,9 +432,68 @@ tbody tr:hover { background: rgba(247,117,42,.04); }
 #dashboard:not(.hidden) .charts-row    { animation-delay: .24s;  }
 #dashboard:not(.hidden) .table-section { animation-delay: .32s;  }
 
+/* ── Burger menu ────────────────────────────────────── */
+
+#burger-btn {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 9999px;
+  border: 2px solid var(--blue);
+  background: none;
+  cursor: pointer;
+  padding: 0;
+  flex-shrink: 0;
+  transition: background .15s;
+}
+#burger-btn:hover { background: var(--blue); }
+#burger-btn:hover svg { stroke: #fff; }
+#burger-btn svg { width: 18px; height: 18px; stroke: var(--blue); transition: stroke .15s; }
+
+#burger-menu {
+  position: fixed;
+  top: 76px;
+  right: 16px;
+  background: var(--card-bg);
+  border-radius: var(--radius);
+  box-shadow: 0 4px 24px rgba(18, 28, 87, .14);
+  border: 1.5px solid rgba(18, 28, 87, .09);
+  padding: 8px;
+  width: 200px;
+  z-index: 300;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+#burger-clear,
+#burger-logout {
+  width: 100%;
+  padding: 10px 14px;
+  border-radius: 9999px;
+  border: none;
+  background: none;
+  font-size: 13px;
+  font-weight: 600;
+  font-family: inherit;
+  cursor: pointer;
+  text-align: left;
+  transition: background .15s;
+}
+
+#burger-clear { color: #c0392b; }
+#burger-clear:hover { background: rgba(192, 57, 43, .08); }
+
+#burger-logout { color: var(--blue); }
+#burger-logout:hover { background: rgba(18, 28, 87, .07); }
+
 /* ── Responsive ─────────────────────────────────────── */
 
 @media (max-width: 760px) {
-  .stat-cards  { grid-template-columns: repeat(2, 1fr); }
-  .charts-row  { grid-template-columns: 1fr; }
+  .stat-cards        { grid-template-columns: repeat(2, 1fr); }
+  .charts-row        { grid-template-columns: 1fr; }
+  .header-actions    { display: none; }
+  #burger-btn        { display: flex; }
 }

@@ -96,9 +96,37 @@ async function refreshDashboard() {
   await renderUserTable(runs);
 }
 
+const burgerBtn  = $('burger-btn');
+const burgerMenu = $('burger-menu');
+
+burgerBtn.addEventListener('click', e => {
+  e.stopPropagation();
+  burgerMenu.classList.toggle('hidden');
+});
+
+document.addEventListener('click', e => {
+  if (!burgerMenu.classList.contains('hidden') &&
+      !burgerMenu.contains(e.target) && e.target !== burgerBtn) {
+    burgerMenu.classList.add('hidden');
+  }
+});
+
+$('burger-clear').addEventListener('click', () => {
+  burgerMenu.classList.add('hidden');
+  openConfirm();
+});
+
+$('burger-logout').addEventListener('click', async () => {
+  await db.auth.signOut();
+  window.location.href = location.href.split('/admin')[0] + '/';
+});
+
 function showDashboard(user) {
   dashboard.classList.remove('hidden');
-  if (user?.email === ADMIN_EMAIL) $('dash-clear').style.display = 'inline-flex';
+  if (user?.email === ADMIN_EMAIL) {
+    $('dash-clear').style.display = 'inline-flex';
+    $('burger-clear').classList.remove('hidden');
+  }
   refreshDashboard();
 
   db.channel('compression_runs_live')
