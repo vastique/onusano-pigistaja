@@ -94,8 +94,9 @@ header {
   margin-bottom: 32px;
 }
 
-.header-left { display: flex; align-items: center; }
-.header-logo { height: 50px; width: auto; margin-top: 2px; }
+.header-left  { display: flex; align-items: center; }
+.header-right { display: flex; align-items: center; }
+.header-logo  { height: 50px; width: auto; margin-top: 2px; }
 
 .header-actions { display: flex; gap: 8px; }
 
