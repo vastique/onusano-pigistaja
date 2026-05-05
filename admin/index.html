@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="et">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin — Bänneripigistaja</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,700;9..40,800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="admin.css">
+</head>
+<body>
+
+  <div id="gate" class="hidden">
+    <div id="gate-box">
+      <h1>Admin</h1>
+      <form id="gate-form" novalidate>
+        <input type="email"    id="gate-email"    placeholder="E-post"  required autocomplete="email">
+        <input type="password" id="gate-password" placeholder="Parool"  required autocomplete="current-password">
+        <button type="submit">Logi sisse</button>
+      </form>
+      <p id="gate-error"></p>
+    </div>
+  </div>
+
+  <div id="dashboard" class="hidden">
+    <header>
+      <div class="header-left">
+        <img src="../assets/admin-panel-logo.svg" alt="Admin Panel" class="header-logo">
+      </div>
+      <div class="header-actions">
+        <button id="dash-clear" type="button">Kustuta andmed</button>
+        <button id="dash-logout" type="button">Logi välja</button>
+      </div>
+    </header>
+
+    <main>
+
+      <!-- Stat cards -->
+      <section class="stat-cards">
+        <div class="card">
+          <span class="card-value" id="stat-users">—</span>
+          <span class="card-label">Registreeritud kasutajat</span>
+        </div>
+        <div class="card">
+          <span class="card-value" id="stat-runs-week">—</span>
+          <span class="card-label">Pigistust sel nädalal</span>
+        </div>
+        <div class="card">
+          <span class="card-value" id="stat-bytes-saved">—</span>
+          <span class="card-label">Kokku ruumi kokku hoitud</span>
+        </div>
+        <div class="card">
+          <span class="card-value" id="stat-avg-ratio">—</span>
+          <span class="card-label">Keskmine tihendussuhe</span>
+        </div>
+      </section>
+
+      <!-- Compressor of the month -->
+      <section class="cotm-section">
+        <div id="cotm-card">
+
+          <!-- Shadow overlay animation -->
+          <div class="cotm-shadow-bg">
+            <svg style="position:absolute;width:0;height:0;overflow:hidden">
+              <defs>
+                <filter id="cotm-filter">
+                  <feTurbulence result="undulation" numOctaves="2" baseFrequency="0.00085,0.0034" seed="0" type="turbulence"/>
+                  <feColorMatrix id="cotm-hue" in="undulation" type="hueRotate" values="180"/>
+                  <feColorMatrix in="dist" result="circulation" type="matrix" values="4 0 0 0 1  4 0 0 0 1  4 0 0 0 1  1 0 0 0 0"/>
+                  <feDisplacementMap in="SourceGraphic" in2="circulation" scale="64" result="dist"/>
+                  <feDisplacementMap in="dist" in2="undulation" scale="64" result="output"/>
+                </filter>
+              </defs>
+            </svg>
+            <div class="cotm-shadow-inner"></div>
+          </div>
+
+          <!-- Confetti pieces -->
+          <span class="cp" style="--x:6%;--y:20%;--d:0s;--s:7px;--c:rgba(247,117,42,.56)"></span>
+          <span class="cp" style="--x:18%;--y:70%;--d:-6s;--s:6px;--c:rgba(255,255,255,.4)"></span>
+          <span class="cp" style="--x:32%;--y:40%;--d:-11s;--s:8px;--c:rgba(247,117,42,.44)"></span>
+          <span class="cp" style="--x:50%;--y:80%;--d:-4s;--s:5px;--c:rgba(255,220,100,.48)"></span>
+          <span class="cp" style="--x:65%;--y:25%;--d:-15s;--s:7px;--c:rgba(255,255,255,.36)"></span>
+          <span class="cp" style="--x:78%;--y:60%;--d:-8s;--s:6px;--c:rgba(247,117,42,.48)"></span>
+          <span class="cp" style="--x:88%;--y:35%;--d:-2s;--s:5px;--c:rgba(255,220,100,.4)"></span>
+          <span class="cp" style="--x:42%;--y:55%;--d:-18s;--s:7px;--c:rgba(255,255,255,.4)"></span>
+          <span class="cp" style="--x:12%;--y:45%;--d:-9s;--s:6px;--c:rgba(247,160,60,.52)"></span>
+          <span class="cp" style="--x:72%;--y:75%;--d:-13s;--s:8px;--c:rgba(255,255,255,.32)"></span>
+          <span class="cp" style="--x:25%;--y:15%;--d:-7s;--s:5px;--c:rgba(255,220,100,.44)"></span>
+          <span class="cp" style="--x:58%;--y:50%;--d:-16s;--s:6px;--c:rgba(247,117,42,.4)"></span>
+          <span class="cp" style="--x:82%;--y:20%;--d:-3s;--s:7px;--c:rgba(255,255,255,.36)"></span>
+
+          <div class="cotm-trophy">
+            <img src="../assets/trophy.png" alt="Trophy">
+          </div>
+          <div class="cotm-body">
+            <div class="cotm-title">Kuu pigistaja</div>
+            <div class="cotm-name"  id="cotm-name">—</div>
+            <div class="cotm-stat"  id="cotm-stat">—</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Charts row -->
+      <section class="charts-row">
+        <div class="chart-box">
+          <h2>Aktiivsed kasutajad (30 päeva)</h2>
+          <canvas id="chart-dau"></canvas>
+        </div>
+        <div class="chart-box">
+          <h2>Top bänneri mõõdud</h2>
+          <canvas id="chart-sizes"></canvas>
+        </div>
+      </section>
+
+      <!-- User table -->
+      <section class="table-section">
+        <h2>Kasutajad</h2>
+        <div class="table-wrap">
+          <table id="user-table">
+            <thead>
+              <tr>
+                <th>E-post</th>
+                <th>Viimati aktiivne</th>
+                <th>Pigistusi kokku</th>
+                <th>Faile kokku</th>
+              </tr>
+            </thead>
+            <tbody id="user-tbody"></tbody>
+          </table>
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <!-- Confirm delete modal -->
+  <div id="confirm-overlay" class="hidden">
+    <div id="confirm-modal">
+      <div id="confirm-step-1">
+        <h2>Kustuta andmed</h2>
+        <p>Kõik statistikaandmed kustutatakse jäädavalt. Seda ei saa tagasi võtta.</p>
+        <div class="confirm-actions">
+          <button id="confirm-cancel" type="button">Tühista</button>
+          <button id="confirm-next" type="button">Kustuta</button>
+        </div>
+      </div>
+      <div id="confirm-step-2" class="hidden">
+        <h2>Oled sa täiesti kindel?</h2>
+        <p>Tõesti kõik? Päriselt? Seda ei saa tagasi võtta.</p>
+        <div class="confirm-actions">
+          <button id="confirm-back" type="button">Tühista</button>
+          <button id="confirm-ok" type="button">Jah, kustuta kõik</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="admin.js"></script>
+</body>
+</html>

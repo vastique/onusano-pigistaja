@@ -1,5 +1,12 @@
 'use strict';
 
+// ── Supabase ──────────────────────────────────────────────────────────────────
+
+const SUPABASE_URL      = 'https://ydbeigrvlsvmrhouguhm.supabase.co';
+const SUPABASE_ANON_KEY = 'sb_publishable_jGOeC0DLdJlzI64FNcSPaQ_bZEyM3UN';
+const { createClient }  = window.supabase;
+const db                = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
 // ── Constants ─────────────────────────────────────────────────────────────────
 
 const IMAGE_EXTS = new Set(['jpg','jpeg','png','gif','bmp','tiff','tif','webp','heic']);
@@ -11,6 +18,7 @@ let isProcessing = false;
 let stopWiggle   = null;
 let errorTimer   = null;
 let splashDone   = false;
+let currentUser  = null;
 
 // ── DOM ───────────────────────────────────────────────────────────────────────
 
@@ -30,6 +38,20 @@ const errorBubble  = $('error-bubble');
 const fileInput    = $('file-input');
 const confettiCvs  = $('confetti-canvas');
 const confettiCtx  = confettiCvs.getContext('2d');
+const authBtn        = $('auth-btn');
+const authOverlay    = $('auth-overlay');
+const authClose      = $('auth-close');
+const authTabs       = document.querySelectorAll('.auth-tab');
+const authForm       = $('auth-form');
+const authEmail      = $('auth-email');
+const authPassword   = $('auth-password');
+const authSubmit     = $('auth-submit');
+const authMessage    = $('auth-message');
+const authLoginView  = $('auth-login-view');
+const authDropdown   = $('auth-dropdown');
+const dropdownEmail  = $('dropdown-email');
+const dropdownLogout = $('dropdown-logout');
+const dropdownAdmin  = $('dropdown-admin');
 
 // ── Splash ─────────────────────────────────────────────────────────────────────
 
@@ -310,6 +332,7 @@ async function processFiles() {
     document.body.removeChild(a);
     setTimeout(() => URL.revokeObjectURL(a.href), 1000);
 
+    logCompressionRun(toProcess, entries);
     files = [];
     launchConfetti();
   }
@@ -448,6 +471,137 @@ compressBtn.addEventListener('click', () => {
   if (!files.length) showErrorBubble();
   else processFiles();
 });
+
+// ── Auth ──────────────────────────────────────────────────────────────────────
+
+let authMode = 'login';
+
+function setAuthUI(user) {
+  currentUser = user;
+  authBtn.classList.toggle('logged-in', !!user);
+  authBtn.title = user ? 'Konto' : 'Logi sisse';
+  authBtn.setAttribute('aria-label', user ? 'Konto' : 'Logi sisse');
+}
+
+function openDropdown() {
+  dropdownEmail.textContent = currentUser.email;
+  authDropdown.classList.remove('hidden');
+}
+
+function closeDropdown() {
+  authDropdown.classList.add('hidden');
+}
+
+function openAuthModal() {
+  setAuthMode('login');
+  setTimeout(() => authEmail.focus(), 50);
+  authOverlay.classList.remove('hidden');
+}
+
+function closeAuthModal() {
+  authOverlay.classList.add('hidden');
+  authMessage.textContent = '';
+  authMessage.className   = '';
+}
+
+function setAuthMode(mode) {
+  authMode = mode;
+  authTabs.forEach(t => t.classList.toggle('active', t.dataset.tab === mode));
+  authSubmit.textContent  = mode === 'login' ? 'Logi sisse' : 'Registreeru';
+  authMessage.textContent = '';
+  authMessage.className   = '';
+}
+
+authBtn.addEventListener('click', e => {
+  e.stopPropagation();
+  if (currentUser) {
+    authDropdown.classList.contains('hidden') ? openDropdown() : closeDropdown();
+  } else {
+    openAuthModal();
+  }
+});
+
+document.addEventListener('click', e => {
+  if (!authDropdown.classList.contains('hidden') &&
+      !authDropdown.contains(e.target) && e.target !== authBtn) {
+    closeDropdown();
+  }
+});
+
+authClose.addEventListener('click', closeAuthModal);
+authOverlay.addEventListener('click', e => { if (e.target === authOverlay) closeAuthModal(); });
+
+authTabs.forEach(tab => tab.addEventListener('click', () => setAuthMode(tab.dataset.tab)));
+
+authForm.addEventListener('submit', async e => {
+  e.preventDefault();
+  authSubmit.disabled     = true;
+  authMessage.textContent = '';
+  authMessage.className   = '';
+
+  const email    = authEmail.value.trim();
+  const password = authPassword.value;
+
+  if (authMode === 'register' && !email.endsWith('@delfi.ee')) {
+    authSubmit.disabled     = false;
+    authMessage.textContent = 'Registreerimine on lubatud ainult @delfi.ee kontodele.';
+    authMessage.className   = 'error';
+    return;
+  }
+
+  const { error } = authMode === 'login'
+    ? await db.auth.signInWithPassword({ email, password })
+    : await db.auth.signUp({ email, password });
+
+  authSubmit.disabled = false;
+
+  if (error) {
+    authMessage.textContent = error.message;
+    authMessage.className   = 'error';
+  } else if (authMode === 'register') {
+    authMessage.textContent = 'Kinnitusmeil on saadetud!';
+  } else {
+    closeAuthModal();
+  }
+});
+
+dropdownLogout.addEventListener('click', async () => {
+  await db.auth.signOut();
+  closeDropdown();
+});
+
+db.auth.onAuthStateChange((_event, session) => {
+  setAuthUI(session?.user ?? null);
+});
+
+db.auth.getSession().then(({ data: { session } }) => {
+  setAuthUI(session?.user ?? null);
+});
+
+// ── Compression event logging ─────────────────────────────────────────────────
+
+function extractBannerSizes(fileList) {
+  const sizes = new Set();
+  fileList.forEach(f => {
+    const m = f.name.match(/(\d+x\d+)px/i);
+    if (m) sizes.add(m[1]);
+  });
+  return [...sizes];
+}
+
+function logCompressionRun(toProcess, entries) {
+  if (!currentUser) return;
+  const totalInput  = toProcess.reduce((s, f) => s + f.size, 0);
+  const totalOutput = entries.reduce((s, e) => s + e.data.byteLength, 0);
+  db.from('compression_runs').insert({
+    user_id:            currentUser.id,
+    email:              currentUser.email,
+    file_count:         entries.length,
+    total_input_bytes:  totalInput,
+    total_output_bytes: totalOutput,
+    banner_sizes:       extractBannerSizes(toProcess),
+  }).then(({ error }) => { if (error) console.error('logCompressionRun:', error); });
+}
 
 // ── Init ──────────────────────────────────────────────────────────────────────
 
