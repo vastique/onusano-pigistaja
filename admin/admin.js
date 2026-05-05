@@ -45,7 +45,7 @@ gateForm.addEventListener('submit', async e => {
 
 dashLogout.addEventListener('click', async () => {
   await db.auth.signOut();
-  window.location.href = '../';
+  window.location.href = location.href.split('/admin')[0] + '/';
 });
 
 const confirmOverlay = $('confirm-overlay');
