@@ -59,13 +59,13 @@ body {
 
 /* ── Logo ───────────────────────────────────────────── */
 
-#logo { height: 100px; align-self: center; display: block; user-select: none; -webkit-user-drag: none; }
+#logo { height: 140px; align-self: center; display: block; user-select: none; -webkit-user-drag: none; }
 
 /* ── Drop zone ──────────────────────────────────────── */
 
 #drop-zone {
   position: relative;
-  height: 400px;
+  height: 450px;
   border-radius: 16px;
   display: flex;
   align-items: center;
