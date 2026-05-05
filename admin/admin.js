@@ -93,7 +93,7 @@ async function refreshDashboard() {
   renderCotm(runs);
   renderDauChart(runs);
   renderSizesChart(runs);
-  renderUserTable(runs);
+  await renderUserTable(runs);
 }
 
 function showDashboard(user) {
@@ -258,8 +258,14 @@ function renderSizesChart(runs) {
 
 // ── User table ────────────────────────────────────────────────────────────────
 
-function renderUserTable(runs) {
+async function renderUserTable(runs) {
+  const { data: authUsers } = await db.rpc('list_auth_users');
+
   const users = {};
+  (authUsers || []).forEach(u => {
+    users[u.email] = { lastActive: u.created_at, runs: 0, files: 0 };
+  });
+
   runs.forEach(r => {
     if (!users[r.email]) users[r.email] = { lastActive: r.created_at, runs: 0, files: 0 };
     const u = users[r.email];
